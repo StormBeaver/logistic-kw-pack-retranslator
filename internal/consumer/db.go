@@ -72,6 +72,7 @@ func (c *consumer) lockDelivery() {
 				case <-ticker.C:
 					events, err := c.repo.PreProcess(c.ctx, c.batchSize)
 					if err != nil {
+						log.Err(err).Msg("PreProcess failed")
 						continue
 					}
 					eventCounter.EventsCount.Add(float64(len(events)))
@@ -103,7 +104,7 @@ func (c *consumer) mainDelivery() {
 				case <-ticker.C:
 					events, err := c.repo.Lock(c.ctx, c.batchSize)
 					if err != nil {
-						log.Err(err).Msg("mission failed")
+						log.Err(err).Msg("Lock failed")
 						continue
 					}
 					eventCounter.EventsCount.Add(float64(len(events)))
