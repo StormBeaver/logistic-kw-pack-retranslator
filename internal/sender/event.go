@@ -20,16 +20,14 @@ type Sender struct {
 func (s Sender) Send(pack *repo.PackEvent) error {
 	msg, err := json.Marshal(*pack)
 	if err != nil {
-		log.Info().Uint64("MARSHALING send event ID: ", pack.ID)
 		return fmt.Errorf("marshaling pack: %w", err)
 	}
 
 	_, _, err = s.SendMessage(prepareMessage(pack.Type, msg))
 	if err != nil {
-		log.Info().Uint64("ERROR SENDING send event ID: ", pack.ID)
 		return fmt.Errorf("send message to Kafka: %w", err)
 	}
-	log.Info().Uint64("send event ID: ", pack.ID)
+	log.Debug().Uint64("send event ID:", pack.ID).Msg("")
 
 	return nil
 }
