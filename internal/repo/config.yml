@@ -1,0 +1,49 @@
+project:
+  name: Ozon Code Platform Pack Retranslator
+  debug: true
+  environment: development
+
+metrics:
+  host: 0.0.0.0
+  port: 9100
+  path: /metrics
+
+jaeger:
+  service: "logistic-pack-retranslator"
+  host: "jaeger"
+  port: ":6831"
+
+database:
+  host: localhost  # for local launch
+  # host: postgres
+
+  port: 5432
+  user: postgres
+  password: postgres
+  name: logistic_pack_api
+  sslmode: disable
+  driver: pgx
+  connections:
+    maxOpenCons: 5
+    maxIdleCons: 5
+    connMaxIdleTime: 5m
+    connMaxLifeTime: 5m
+
+retranslator:
+  channelSize: 512
+  consumerCount: 2
+  batchSize: 10
+  ticker: 4s
+  producerCount: 28
+  workerCount: 2
+
+kafka:
+  topics: 
+    - "created"
+    - "deleted"
+    - "updated"
+  groupId: "logistic-pack"
+  brokers:
+    - "localhost:9094"
+    - "localhost:9095"
+    - "localhost:9096"
