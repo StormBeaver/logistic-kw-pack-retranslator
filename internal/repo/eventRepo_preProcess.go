@@ -6,6 +6,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/opentracing/opentracing-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (e eventRepo) PreProcess(ctx context.Context, count uint64) ([]PackEvent, error) {
@@ -26,6 +27,7 @@ func (e eventRepo) PreProcess(ctx context.Context, count uint64) ([]PackEvent, e
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := sQuery.ToSql()
+	log.Debug().Str("create SQL in subQ", sql)
 	if err != nil {
 		return nil, fmt.Errorf("convert to sql: %w", err)
 	}

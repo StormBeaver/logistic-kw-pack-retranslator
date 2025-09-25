@@ -2,10 +2,11 @@ package producer
 
 import (
 	"context"
-	"log"
+
 	"sync"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/eventCounter"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/repo"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/sender"
@@ -74,12 +75,15 @@ func (p *producer) Start() {
 				select {
 				case event := <-p.events:
 					if err := p.sender.Send(&event); err != nil {
+						log.Err(err).Msg("send to kafka failed")
 						toUnlock = append(toUnlock, event.ID)
 					} else {
 						toRemove = append(toRemove, event.ID)
 					}
 				case <-ticker.C:
 					p.delivery(toRemove, toUnlock)
+					log.Debug().Int("send to remove: ", len(toRemove))
+					log.Debug().Int("send to unlock: ", len(toUnlock))
 					toUnlock = toUnlock[:0]
 					toRemove = toRemove[:0]
 				case <-p.ctx.Done():
@@ -101,7 +105,7 @@ func (p *producer) delivery(toRemove, toUnlock []uint64) {
 		tUnlock := append(make([]uint64, 0, len(toUnlock)), toUnlock...)
 		p.workerPool.Submit(func() {
 			if err := p.repo.Unlock(p.ctx, tUnlock); err != nil {
-				log.Println(err)
+				log.Err(err).Msg("delivery unlock fail")
 			}
 			eventCounter.EventsCount.Sub(float64(len(tUnlock)))
 		})
@@ -111,9 +115,9 @@ func (p *producer) delivery(toRemove, toUnlock []uint64) {
 		tRemove := append(make([]uint64, 0, len(toRemove)), toRemove...)
 		p.workerPool.Submit(func() {
 			if err := p.repo.Remove(p.ctx, tRemove); err != nil {
-				log.Printf("Remove error: %s", err)
+				log.Err(err).Msg("delivery remove fail")
 				if err := p.repo.Unlock(p.ctx, tRemove); err != nil {
-					log.Printf("Unlock error while handling Remove error: %s", err)
+					log.Err(err).Msg("delivery unlock in remove - failed")
 				}
 			}
 			eventCounter.EventsCount.Sub(float64(len(tRemove)))

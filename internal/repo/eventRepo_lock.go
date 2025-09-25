@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/opentracing/opentracing-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (e eventRepo) Lock(ctx context.Context, count uint64) ([]PackEvent, error) {
@@ -33,6 +34,7 @@ func (e eventRepo) Lock(ctx context.Context, count uint64) ([]PackEvent, error) 
 	if err != nil {
 		return nil, fmt.Errorf("convert to sql: %w", err)
 	}
+	log.Debug().Str("create SQL in subQ", sql)
 
 	err = e.db.SelectContext(ctx, &ids, sql, args...)
 	if err != nil {
@@ -48,6 +50,7 @@ func (e eventRepo) Lock(ctx context.Context, count uint64) ([]PackEvent, error) 
 		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err = sQuery.ToSql()
+	log.Debug().Str("create SQL in mainQ", sql)
 	if err != nil {
 		return nil, fmt.Errorf("convert to sql: %w", err)
 	}
