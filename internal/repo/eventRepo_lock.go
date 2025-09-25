@@ -22,10 +22,14 @@ func (e eventRepo) Lock(ctx context.Context, count uint64) ([]PackEvent, error) 
 		return nil, fmt.Errorf("try Lock: %w", err)
 	}
 
-	subQ := sq.Select("id").From("packs_events").Where(sq.Eq{"lock": false}).Limit(count).RunWith(e.db).PlaceholderFormat(sq.Dollar)
+	// it will be beautifull to make subq isinde sQury, but idk how
+	subQ := sq.Select("id").
+		From("packs_events").
+		Where(sq.Eq{"lock": false}).
+		Limit(count).RunWith(e.db).
+		PlaceholderFormat(sq.Dollar)
+
 	sql, args, err := subQ.ToSql()
-	fmt.Println(sql)
-	fmt.Println(args...)
 	if err != nil {
 		return nil, fmt.Errorf("convert to sql: %w", err)
 	}
