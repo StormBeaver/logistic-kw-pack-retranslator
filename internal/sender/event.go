@@ -27,7 +27,7 @@ func (s Sender) Send(pack *repo.PackEvent) error {
 	if err != nil {
 		return fmt.Errorf("send message to Kafka: %w", err)
 	}
-	log.Debug().Uint64("send event ID:", pack.ID).Msg("")
+	log.Debug().Uint64("send event ID:", pack.ID).Send()
 
 	return nil
 }
