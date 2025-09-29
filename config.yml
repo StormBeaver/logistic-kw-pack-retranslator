@@ -11,7 +11,7 @@ metrics:
 jaeger:
   service: "logistic-pack-retranslator"
   host: "jaeger"
-  port: ":6832"
+  port: ":6833"
 
 database:
   host: localhost  # for local launch
