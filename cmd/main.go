@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	_ "net/http/pprof"
+
+	// _ "net/http/pprof"
 	"os/signal"
 	"syscall"
 	"time"
@@ -15,8 +16,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/config"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/database"
-	"github.com/stormbeaver/logistic-pack-retranslator/internal/metrics"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/retranslator"
+	"github.com/stormbeaver/logistic-pack-retranslator/internal/server/metrics"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/tracer"
 )
 
