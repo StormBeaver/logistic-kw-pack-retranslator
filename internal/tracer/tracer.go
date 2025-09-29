@@ -34,7 +34,7 @@ func NewTracer(cfg *config.Config) (io.Closer, error) {
 	}
 
 	opentracing.SetGlobalTracer(tracer)
-	log.Info().Msgf("Traces started")
+	log.Info().Msgf("Jaeger started on %s:%s", cfg.Jaeger.Host, cfg.Jaeger.Port)
 
 	return closer, nil
 }

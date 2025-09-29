@@ -17,6 +17,7 @@ import (
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/database"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/metrics"
 	"github.com/stormbeaver/logistic-pack-retranslator/internal/retranslator"
+	"github.com/stormbeaver/logistic-pack-retranslator/internal/tracer"
 )
 
 func main() {
@@ -61,6 +62,14 @@ func main() {
 	} else {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
+
+	tracing, err := tracer.NewTracer(&cfg)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed init tracing")
+
+		return
+	}
+	defer tracing.Close()
 
 	metrics.StartMetricsServer(ctx, &cfg)
 
