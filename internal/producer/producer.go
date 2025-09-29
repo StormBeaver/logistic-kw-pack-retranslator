@@ -82,12 +82,16 @@ func (p *producer) Start() {
 					}
 				case <-ticker.C:
 					p.delivery(toRemove, toUnlock)
-					log.Debug().Int("send to remove: ", len(toRemove))
-					log.Debug().Int("send to unlock: ", len(toUnlock))
+					log.Debug().Int("send to remove", len(toRemove)).
+						Int("send to unlock", len(toUnlock)).
+						Uints64("send to remove", toRemove).
+						Uints64("send to unlock", toUnlock).Send()
 					toUnlock = toUnlock[:0]
 					toRemove = toRemove[:0]
 				case <-p.ctx.Done():
 					p.delivery(toRemove, toUnlock)
+					log.Debug().Uints64("ctx.Done() case toUnlock", toUnlock).
+						Uints64("ctx.Done() case toRemove", toRemove)
 					return
 				}
 			}
@@ -101,10 +105,12 @@ func (p *producer) Close() {
 }
 
 func (p *producer) delivery(toRemove, toUnlock []uint64) {
+	ctx, _ := context.WithCancel(context.Background())
+
 	if len(toUnlock) != 0 {
 		tUnlock := append(make([]uint64, 0, len(toUnlock)), toUnlock...)
 		p.workerPool.Submit(func() {
-			if err := p.repo.Unlock(p.ctx, tUnlock); err != nil {
+			if err := p.repo.Unlock(ctx, tUnlock); err != nil {
 				log.Err(err).Msg("delivery unlock fail")
 			}
 			eventCounter.EventsCount.Sub(float64(len(tUnlock)))
@@ -114,7 +120,7 @@ func (p *producer) delivery(toRemove, toUnlock []uint64) {
 	if len(toRemove) != 0 {
 		tRemove := append(make([]uint64, 0, len(toRemove)), toRemove...)
 		p.workerPool.Submit(func() {
-			if err := p.repo.Remove(p.ctx, tRemove); err != nil {
+			if err := p.repo.Remove(ctx, tRemove); err != nil {
 				log.Err(err).Msg("delivery remove fail")
 				if err := p.repo.Unlock(p.ctx, tRemove); err != nil {
 					log.Err(err).Msg("delivery unlock in remove - failed")
