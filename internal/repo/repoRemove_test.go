@@ -15,7 +15,7 @@ import (
 )
 
 func TestRemove(t *testing.T) {
-	if err := config.ReadConfigYML("config.yml"); err != nil {
+	if err := config.ReadConfigYML("config_test.yml"); err != nil {
 		panic(err)
 	}
 
