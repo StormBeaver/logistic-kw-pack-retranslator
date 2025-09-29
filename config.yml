@@ -5,13 +5,13 @@ project:
 
 metrics:
   host: 0.0.0.0
-  port: 9100
+  port: 9101
   path: /metrics
 
 jaeger:
   service: "logistic-pack-retranslator"
   host: "jaeger"
-  port: ":6831"
+  port: ":6832"
 
 database:
   host: localhost  # for local launch
@@ -34,14 +34,10 @@ retranslator:
   consumerCount: 2
   batchSize: 10
   ticker: 4s
-  producerCount: 28
+  producerCount: 2
   workerCount: 2
 
 kafka:
-  topics: 
-    - "created"
-    - "removed"
-    - "updated"
   groupId: "logistic-pack"
   brokers:
     - "localhost:9094"
