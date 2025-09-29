@@ -23,7 +23,7 @@ func (e eventRepo) Lock(ctx context.Context, count uint64) ([]PackEvent, error) 
 		return nil, fmt.Errorf("try Lock: %w", err)
 	}
 
-	// it will be beautifull to make subq isinde sQury, but idk how
+	// it will be beautifull to make subQ isinde sQuery, but idk how
 	subQ := sq.Select("id").
 		From("packs_events").
 		Where(sq.Eq{"lock": false}).
