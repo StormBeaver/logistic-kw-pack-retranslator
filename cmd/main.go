@@ -37,8 +37,10 @@ func main() {
 	)
 
 	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	initCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+
+	initCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
 	db, err := database.NewPostgres(initCtx, dsn, cfg.Database.Driver, &cfg.Database.Connections)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed init postgres")
@@ -63,8 +65,8 @@ func main() {
 	metrics.StartMetricsServer(ctx, &cfg)
 
 	retranslator := retranslator.NewRetranslator(*retranslator.RetConfig(&cfg, db))
-	retranslator.Start()
 	log.Info().Msg("retranslator started")
+	retranslator.Start()
 
 	<-ctx.Done()
 	log.Info().Msg("retranslator stoped")
