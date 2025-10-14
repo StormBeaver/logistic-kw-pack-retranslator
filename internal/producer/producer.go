@@ -105,7 +105,7 @@ func (p *producer) Close() {
 }
 
 func (p *producer) delivery(toRemove, toUnlock []uint64) {
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	if len(toUnlock) != 0 {
 		tUnlock := append(make([]uint64, 0, len(toUnlock)), toUnlock...)
