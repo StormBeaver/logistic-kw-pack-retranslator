@@ -8,11 +8,6 @@ metrics:
   port: 9101
   path: /metrics
 
-jaeger:
-  service: "logistic-pack-retranslator"
-  host: "jaeger"
-  port: ":6832"
-
 database:
   host: localhost  # for local launch
   # host: postgres
