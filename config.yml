@@ -9,8 +9,8 @@ metrics:
   path: /metrics
 
 database:
-  host: localhost  # for local launch
-  # host: postgres
+  # host: localhost  # for local launch
+  host: postgres
 
   port: 5432
   user: postgres
