@@ -17,3 +17,7 @@ go-build: .go-build
 .PHONY: docker-build
 docker-build:
 	docker build . -t stormbeaver/logistic-pack-retranslator
+
+.PHONY: docker-push
+docker-push:
+	docker push stormbeaver/logistic-pack-retranslator

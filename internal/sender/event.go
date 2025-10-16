@@ -42,7 +42,9 @@ func NewEventSender(brokers []string) EventSender {
 	if err != nil {
 		log.Fatal().Err(err)
 	}
-
+	if producer == nil {
+		log.Fatal().Msg("can't create newSyncProducer")
+	}
 	return Sender{producer}
 }
 
