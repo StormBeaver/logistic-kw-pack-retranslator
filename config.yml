@@ -35,6 +35,5 @@ retranslator:
 kafka:
   groupId: "logistic-pack"
   brokers:
-    - "kafka:9094"
-    # - "localhost:9095"
-    # - "localhost:9096"
+    - "kafka:9092"
+    # - "localhost:9094"
